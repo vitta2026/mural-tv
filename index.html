@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste Mural Digital - Clínica</title>
+  <style>
+    /* Reseta margens e esconde barras de rolagem */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #111; /* Fundo escuro */
+      font-family: sans-serif;
+    }
+
+    /* Container principal */
+    .mural-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    /* Estilo da imagem */
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Preenche a tela inteira */
+      display: block;
+      transition: opacity 0.8s ease-in-out; /* Transição suave */
+    }
+
+    /* Legenda de teste na imagem */
+    .legenda {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="mural-container">
+    <img id="slide" src="" alt="Carregando...">
+    <div class="legenda" id="legenda-texto">Aguarde...</div>
+  </div>
+
+  <script>
+    // IDs de imagens reais do Unsplash que lembram ambientes de clínica/profissionais
+    // (Apenas para simular o visual final)
+    const imagensIds = [
+      '3874013340532-15f79cd2460d', // Exemplo sala de espera limpa
+      '1576091160550-2173bdb999ef', // Exemplo profissional de saúde
+      '1579684385127-1e1555c1902f', // Exemplo sala de atendimento
+      '1581056771107-24ca5f033842'  // Exemplo consultório
+    ];
+
+    const titulos = [
+      "Bem-vindo à nossa Clínica",
+      "Conheça nossa Equipe de Profissionais",
+      "Salas Modernas e Confortáveis",
+      "Agende sua Consulta"
+    ];
+
+    let index = 0;
+    const tempoPorSlide = 5000; // 5 segundos por imagem
+
+    const imgElement = document.getElementById('slide');
+    const legendaElement = document.getElementById('legenda-texto');
+
+    function trocarSlide() {
+      // Gera URL da imagem baseada no ID e no tamanho Full HD (1920x1080)
+      const urlImagem = `https://images.unsplash.com/photo-${imagensIds[index]}?q=80&w=1920&h=1080&auto=format&fit=crop`;
+      
+      // Aplica a nova imagem e legenda
+      imgElement.src = urlImagem;
+      legendaElement.innerText = titulos[index];
+      
+      // Avança o índice e volta ao início se necessário
+      index = (index + 1) % imagensIds.length;
+    }
+
+    // Inicia o carrossel imediatamente e define o intervalo
+    trocarSlide();
+    setInterval(trocarSlide, tempoPorSlide);
+
+  </script>
+
+</body>
+</html>
