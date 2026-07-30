@@ -31,7 +31,7 @@
     img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: cover; /* Preenche toda a tela sem distorcer */
       display: block;
       transition: opacity 0.8s ease-in-out;
     }
@@ -40,12 +40,27 @@
       position: absolute;
       bottom: 30px;
       left: 30px;
+      right: 30px; /* Garante que não vaze em telas pequenas */
+      max-width: fit-content;
       background-color: rgba(0, 0, 0, 0.75);
       color: white;
       padding: 12px 24px;
       border-radius: 8px;
       font-size: 1.5rem;
       font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    /* --- Ajustes específicos para Celular (Telas pequenas) --- */
+    @media (max-width: 768px) {
+      .legenda {
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+        font-size: 1.1rem; /* Diminui o texto no celular para não cobrir a foto */
+        padding: 10px 16px;
+        text-align: center;
+      }
     }
   </style>
 </head>
