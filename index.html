@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Mural Digital - Vitta Saúde</title>
   <style>
     * {
@@ -11,12 +11,12 @@
       box-sizing: border-box;
     }
 
-    body, html {
+    html, body {
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background-color: #111;
-      font-family: sans-serif;
+      background-color: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
     .mural-container {
@@ -31,35 +31,40 @@
     img {
       width: 100%;
       height: 100%;
-      object-fit: cover; /* Preenche toda a tela sem distorcer */
+      object-fit: cover; /* Na TV/PC, preenche a tela inteira */
       display: block;
-      transition: opacity 0.8s ease-in-out;
+      transition: opacity 0.5s ease-in-out;
     }
 
     .legenda {
       position: absolute;
       bottom: 30px;
-      left: 30px;
-      right: 30px; /* Garante que não vaze em telas pequenas */
-      max-width: fit-content;
-      background-color: rgba(0, 0, 0, 0.75);
-      color: white;
+      left: 50%;
+      transform: translateX(-50%);
+      width: max-content;
+      max-width: 90%;
+      background-color: rgba(0, 0, 0, 0.80);
+      color: #fff;
       padding: 12px 24px;
       border-radius: 8px;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       font-weight: bold;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      z-index: 10;
     }
 
-    /* --- Ajustes específicos para Celular (Telas pequenas) --- */
+    /* --- REGRAS ESPECÍFICAS PARA CELULAR --- */
     @media (max-width: 768px) {
+      img {
+        object-fit: contain; /* No celular mostra a foto inteira sem cortar */
+      }
+
       .legenda {
         bottom: 20px;
-        left: 20px;
-        right: 20px;
-        font-size: 1.1rem; /* Diminui o texto no celular para não cobrir a foto */
+        font-size: 1rem;
         padding: 10px 16px;
-        text-align: center;
+        width: 85%;
       }
     }
   </style>
@@ -72,14 +77,13 @@
   </div>
 
   <script>
-    // Lista com as suas imagens reais
     const imagens = [
-      "foto1.jpg", // Foto da recepção / capa
-      "foto2.jpg", // Psicólogo
-      "foto3.jpg", // Nutricionista
-      "foto4.jpg", // Massagista
-      "foto5.jpg", // Sala 1
-      "foto6.jpg"  // Sala 2...
+      "foto1.jpg",
+      "foto2.jpg",
+      "foto3.jpg",
+      "foto4.jpg",
+      "foto5.jpg",
+      "foto6.jpg"
     ];
 
     const titulos = [
@@ -92,7 +96,7 @@
     ];
 
     let index = 0;
-    const tempoPorSlide = 5000; // 5 segundos por foto
+    const tempoPorSlide = 5000;
 
     const imgElement = document.getElementById('slide');
     const legendaElement = document.getElementById('legenda-texto');
