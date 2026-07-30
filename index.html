@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Teste Mural Digital - Clínica</title>
+  <title>Mural Digital - Clínica</title>
   <style>
-    /* Reseta margens e esconde barras de rolagem */
     * {
       margin: 0;
       padding: 0;
@@ -16,11 +15,10 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background-color: #111; /* Fundo escuro */
+      background-color: #111;
       font-family: sans-serif;
     }
 
-    /* Container principal */
     .mural-container {
       width: 100vw;
       height: 100vh;
@@ -30,25 +28,24 @@
       position: relative;
     }
 
-    /* Estilo da imagem */
     img {
       width: 100%;
       height: 100%;
-      object-fit: cover; /* Preenche a tela inteira */
+      object-fit: cover;
       display: block;
-      transition: opacity 0.8s ease-in-out; /* Transição suave */
+      transition: opacity 0.8s ease-in-out;
     }
 
-    /* Legenda de teste na imagem */
     .legenda {
       position: absolute;
-      bottom: 20px;
-      left: 20px;
-      background-color: rgba(0, 0, 0, 0.7);
+      bottom: 30px;
+      left: 30px;
+      background-color: rgba(0, 0, 0, 0.75);
       color: white;
-      padding: 10px 20px;
-      border-radius: 5px;
-      font-size: 1.2rem;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 1.5rem;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -60,44 +57,35 @@
   </div>
 
   <script>
-    // IDs de imagens reais do Unsplash que lembram ambientes de clínica/profissionais
-    // (Apenas para simular o visual final)
-    const imagensIds = [
-      '3874013340532-15f79cd2460d', // Exemplo sala de espera limpa
-      '1576091160550-2173bdb999ef', // Exemplo profissional de saúde
-      '1579684385127-1e1555c1902f', // Exemplo sala de atendimento
-      '1581056771107-24ca5f033842'  // Exemplo consultório
+    // URLs diretas e funcionais para o teste
+    const imagens = [
+      "https://picsum.photos/id/1067/1920/1080", // Exemplo Ambiente
+      "https://picsum.photos/id/1074/1920/1080", // Exemplo Profissionais
+      "https://picsum.photos/id/1068/1920/1080", // Exemplo Sala de Atendimento
+      "https://picsum.photos/id/1060/1920/1080"  // Exemplo Consultório
     ];
 
     const titulos = [
       "Bem-vindo à nossa Clínica",
       "Conheça nossa Equipe de Profissionais",
-      "Salas Modernas e Confortáveis",
+      "Salas Modernas e Confortáveis (6 Salas)",
       "Agende sua Consulta"
     ];
 
     let index = 0;
-    const tempoPorSlide = 5000; // 5 segundos por imagem
+    const tempoPorSlide = 5000; // 5 segundos por foto
 
     const imgElement = document.getElementById('slide');
     const legendaElement = document.getElementById('legenda-texto');
 
     function trocarSlide() {
-      // Gera URL da imagem baseada no ID e no tamanho Full HD (1920x1080)
-      const urlImagem = `https://images.unsplash.com/photo-${imagensIds[index]}?q=80&w=1920&h=1080&auto=format&fit=crop`;
-      
-      // Aplica a nova imagem e legenda
-      imgElement.src = urlImagem;
+      imgElement.src = imagens[index];
       legendaElement.innerText = titulos[index];
-      
-      // Avança o índice e volta ao início se necessário
-      index = (index + 1) % imagensIds.length;
+      index = (index + 1) % imagens.length;
     }
 
-    // Inicia o carrossel imediatamente e define o intervalo
     trocarSlide();
     setInterval(trocarSlide, tempoPorSlide);
-
   </script>
 
 </body>
