@@ -33,25 +33,8 @@
       height: 100%;
       object-fit: cover; /* Na TV/PC, preenche a tela inteira */
       display: block;
-      transition: opacity 0.5s ease-in-out;
-    }
-
-    .legenda {
-      position: absolute;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: max-content;
-      max-width: 90%;
-      background-color: rgba(0, 0, 0, 0.80);
-      color: #fff;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-size: 1.4rem;
-      font-weight: bold;
-      text-align: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-      z-index: 10;
+      opacity: 1;
+      transition: opacity 0.8s ease-in-out; /* Controla a velocidade do esmaecimento */
     }
 
     /* --- REGRAS ESPECÍFICAS PARA CELULAR --- */
@@ -59,49 +42,36 @@
       img {
         object-fit: contain; /* No celular mostra a foto inteira sem cortar */
       }
-
-      .legenda {
-        bottom: 20px;
-        font-size: 1rem;
-        padding: 10px 16px;
-        width: 85%;
-      }
     }
   </style>
 </head>
 <body>
 
   <div class="mural-container">
-    <img id="slide" src="" alt="Carregando...">
-    <div class="legenda" id="legenda-texto">Aguarde...</div>
+    <img id="slide" src="" alt="Mural Digital">
   </div>
 
   <script>
     const imagens = [
       "foto1.jpg",
-      "foto2.jpg",
-      
-    ];
-
-    const titulos = [
-
-      /* AQUI SERVE PARA COLOCAR TITULO NO RODA PÉ*/
-     
-        /*"Psicologia Especializada",
-      "Nutrição e Saúde",*/
-      
+      "foto2.jpg"
     ];
 
     let index = 0;
-    const tempoPorSlide = 20000;
+    const tempoPorSlide = 20000; // 20 segundos
 
     const imgElement = document.getElementById('slide');
-    const legendaElement = document.getElementById('legenda-texto');
 
     function trocarSlide() {
-      imgElement.src = imagens[index];
-      legendaElement.innerText = titulos[index];
-      index = (index + 1) % imagens.length;
+      // 1. Reduz a opacidade para sumir com a imagem atual
+      imgElement.style.opacity = 0;
+
+      // 2. Aguarda o tempo da animação (800ms) antes de trocar a imagem e reaparecer
+      setTimeout(() => {
+        imgElement.src = imagens[index];
+        imgElement.style.opacity = 1;
+        index = (index + 1) % imagens.length;
+      }, 800); 
     }
 
     trocarSlide();
