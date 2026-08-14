@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Mural Digital - Vitta Saúde</title>
-  <!-- Biblioteca leve para rodar transmissões ao vivo direto na TV -->
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <style>
     * {
       margin: 0;
@@ -24,31 +22,25 @@
     .mural-container {
       width: 100vw;
       height: 100vh;
-      position: relative;
       display: flex;
       justify-content: center;
       align-items: center;
+      position: relative;
     }
 
-    img, video {
-      position: absolute;
-      top: 0;
-      left: 0;
+    img {
       width: 100%;
       height: 100%;
-      border: none;
-      opacity: 0;
-      transition: opacity 0.8s ease-in-out;
-      object-fit: cover;
-    }
-
-    img.ativo, video.ativo {
+      object-fit: cover; /* Na TV/PC, preenche a tela inteira */
+      display: block;
       opacity: 1;
+      transition: opacity 0.8s ease-in-out; /* Controla a velocidade do esmaecimento */
     }
 
+    /* --- REGRAS ESPECÍFICAS PARA CELULAR --- */
     @media (max-width: 768px) {
       img {
-        object-fit: contain;
+        object-fit: contain; /* No celular mostra a foto inteira sem cortar */
       }
     }
   </style>
@@ -56,9 +48,7 @@
 <body>
 
   <div class="mural-container">
-    <img id="slide" src="" alt="Mural Digital" class="ativo">
-    <!-- Player de Vídeo Nativo: ocupa a tela inteira e dá play sozinho -->
-    <video id="tv-player" autoplay muted playsinline></video>
+    <img id="slide" src="" alt="Mural Digital">
   </div>
 
   <script>
@@ -71,76 +61,25 @@
       "foto6.jpg"
     ];
 
-    // Link de Sinal Direto Ao Vivo (Sem anúncios, sem player externo e sem expirar)
-    // Exemplo: Record News Ao Vivo
-    const streamURL = "https://recordnews-lh.akamaihd.net/i/recordnews_hls@186595/index_1800_av-p.m3u8"; 
-
     let index = 0;
-    const tempoPorSlide = 15000; // 15 segundos por foto
-    const tempoTV = 180000;      // 3 minutos para a TV
+    const tempoPorSlide = 15000; // 15 segundos
 
     const imgElement = document.getElementById('slide');
-    const videoElement = document.getElementById('tv-player');
-    let hls = null;
 
-    function exibirFotos() {
-      // Para o vídeo e limpa da memória quando estiver nas fotos
-      if (hls) {
-        hls.destroy();
-        hls = null;
-      }
-      videoElement.pause();
-      videoElement.classList.remove('ativo');
+    function trocarSlide() {
+      // 1. Reduz a opacidade para sumir com a imagem atual
+      imgElement.style.opacity = 0;
 
-      // Exibe a foto
-      imgElement.src = imagens[index];
-      imgElement.classList.add('ativo');
-
-      const intervalFotos = setInterval(() => {
-        imgElement.style.opacity = 0;
-
-        setTimeout(() => {
-          index++;
-
-          if (index >= imagens.length) {
-            clearInterval(intervalFotos);
-            index = 0; 
-            exibirTV();
-            return;
-          }
-
-          imgElement.src = imagens[index];
-          imgElement.style.opacity = 1;
-        }, 800);
-
-      }, tempoPorSlide);
-    }
-
-    function exibirTV() {
-      imgElement.classList.remove('ativo');
-      videoElement.classList.add('ativo');
-
-      // Inicia o vídeo ao vivo com Play automático em Tela Cheia
-      if (Hls.isSupported()) {
-        hls = new Hls();
-        hls.loadSource(streamURL);
-        hls.attachMedia(videoElement);
-        hls.on(Hls.Events.MANIFEST_PARSED, function() {
-          videoElement.play();
-        });
-      } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-        videoElement.src = streamURL;
-        videoElement.play();
-      }
-
-      // Após 3 minutos, volta para as fotos
+      // 2. Aguarda o tempo da animação (800ms) antes de trocar a imagem e reaparecer
       setTimeout(() => {
-        exibirFotos();
-      }, tempoTV);
+        imgElement.src = imagens[index];
+        imgElement.style.opacity = 1;
+        index = (index + 1) % imagens.length;
+      }, 800); 
     }
 
-    // Inicia o mural
-    exibirFotos();
+    trocarSlide();
+    setInterval(trocarSlide, tempoPorSlide);
   </script>
 
 </body>
