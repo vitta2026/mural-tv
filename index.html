@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Mural Digital - Vitta Saúde</title>
-  <!-- Biblioteca para rodar streams HLS (.m3u8) -->
+  <!-- Biblioteca leve para rodar transmissões ao vivo direto na TV -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <style>
     * {
@@ -57,7 +57,7 @@
 
   <div class="mural-container">
     <img id="slide" src="" alt="Mural Digital" class="ativo">
-    <!-- Player de Vídeo Nativo para transmissão contínua -->
+    <!-- Player de Vídeo Nativo: ocupa a tela inteira e dá play sozinho -->
     <video id="tv-player" autoplay muted playsinline></video>
   </div>
 
@@ -71,20 +71,20 @@
       "foto6.jpg"
     ];
 
-    // Link do sinal ao vivo continuo HLS (.m3u8)
-    // Exemplo: Canal de Notícias / Record News / TV pública
+    // Link de Sinal Direto Ao Vivo (Sem anúncios, sem player externo e sem expirar)
+    // Exemplo: Record News Ao Vivo
     const streamURL = "https://recordnews-lh.akamaihd.net/i/recordnews_hls@186595/index_1800_av-p.m3u8"; 
 
     let index = 0;
     const tempoPorSlide = 15000; // 15 segundos por foto
-    const tempoTV = 180000;      // 3 minutos (180.000 ms) para a TV
+    const tempoTV = 180000;      // 3 minutos para a TV
 
     const imgElement = document.getElementById('slide');
     const videoElement = document.getElementById('tv-player');
     let hls = null;
 
     function exibirFotos() {
-      // Pausa o vídeo da TV e remove o sinal para não consumir internet no fundo
+      // Para o vídeo e limpa da memória quando estiver nas fotos
       if (hls) {
         hls.destroy();
         hls = null;
@@ -92,7 +92,7 @@
       videoElement.pause();
       videoElement.classList.remove('ativo');
 
-      // Inicia a exibição das imagens
+      // Exibe a foto
       imgElement.src = imagens[index];
       imgElement.classList.add('ativo');
 
@@ -120,7 +120,7 @@
       imgElement.classList.remove('ativo');
       videoElement.classList.add('ativo');
 
-      // Conecta o streaming contínuo sem dependência do YouTube
+      // Inicia o vídeo ao vivo com Play automático em Tela Cheia
       if (Hls.isSupported()) {
         hls = new Hls();
         hls.loadSource(streamURL);
@@ -129,7 +129,6 @@
           videoElement.play();
         });
       } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-        // Suporte para Safari (iOS/Mac)
         videoElement.src = streamURL;
         videoElement.play();
       }
