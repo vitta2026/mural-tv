@@ -37,7 +37,7 @@
       border: none;
       opacity: 0;
       transition: opacity 0.8s ease-in-out;
-      pointer-events: none; /* Evita cliques na TV */
+      pointer-events: none;
     }
 
     img.ativo, iframe.ativo {
@@ -60,7 +60,6 @@
 
   <div class="mural-container">
     <img id="slide" src="" alt="Mural Digital" class="ativo">
-    <!-- Embed do YouTube com autoplay e som desativado (obrigatório para autoplay rodar em TVs/Browsers) -->
     <iframe id="tv-player" src="" allow="autoplay; encrypted-media"></iframe>
   </div>
 
@@ -74,8 +73,8 @@
       "foto6.jpg"
     ];
 
-    // Coloque aqui o ID do vídeo ao vivo da CNN Brasil no YouTube (a parte depois de watch?v=)
-    const youtubeLiveID = "i_Lw360d2_I"; 
+    // ID do Canal da CNN Brasil no YouTube (Fixo)
+    const channelID = "UCvdwhh_fDyWccR42-hReJmA"; 
 
     let index = 0;
     const tempoPorSlide = 15000; // 15 segundos por foto
@@ -85,25 +84,24 @@
     const tvElement = document.getElementById('tv-player');
 
     function exibirFotos() {
-      // Oculta o player de TV e zera o SRC para economizar memória/banda
+      // Oculta o player e encerra o vídeo para não gastar dados/memória
       tvElement.classList.remove('ativo');
       tvElement.src = "";
 
-      // Exibe a primeira foto
+      // Exibe a foto atual
       imgElement.src = imagens[index];
       imgElement.classList.add('ativo');
 
-      // Loop das fotos
       const intervalFotos = setInterval(() => {
         imgElement.style.opacity = 0;
 
         setTimeout(() => {
           index++;
 
-          // Se passou da última foto, para o carrossel de fotos e chama a TV
+          // Se passou da última foto, para as fotos e vai para a TV
           if (index >= imagens.length) {
             clearInterval(intervalFotos);
-            index = 0; // Reinicia o contador para o próximo ciclo
+            index = 0; 
             exibirTV();
             return;
           }
@@ -116,20 +114,19 @@
     }
 
     function exibirTV() {
-      // Esconde a foto
       imgElement.classList.remove('ativo');
 
-      // Carrega o vídeo ao vivo com autoplay e muted (necessário para permissão de auto-exibição)
-      tvElement.src = `https://www.youtube.com/embed/${youtubeLiveID}?autoplay=1&mute=1&controls=0`;
+      // Puxa a LIVE que estiver ativa no canal oficial da CNN Brasil no momento
+      tvElement.src = `https://www.youtube.com/embed/live_stream?channel=${channelID}&autoplay=1&mute=1&controls=0`;
       tvElement.classList.add('ativo');
 
-      // Aguarda 3 minutos e volta para a sequência de fotos
+      // Espera 3 minutos e volta para as fotos
       setTimeout(() => {
         exibirFotos();
       }, tempoTV);
     }
 
-    // Inicia o fluxo com as fotos
+    // Inicia a exibição
     exibirFotos();
   </script>
 
