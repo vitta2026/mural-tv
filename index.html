@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Mural Digital - Vitta Saúde</title>
+  <!-- Biblioteca para rodar streams HLS (.m3u8) -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <style>
     * {
       margin: 0;
@@ -28,7 +30,7 @@
       align-items: center;
     }
 
-    img, iframe {
+    img, video {
       position: absolute;
       top: 0;
       left: 0;
@@ -37,16 +39,11 @@
       border: none;
       opacity: 0;
       transition: opacity 0.8s ease-in-out;
-      pointer-events: none;
-    }
-
-    img.ativo, iframe.ativo {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    img {
       object-fit: cover;
+    }
+
+    img.ativo, video.ativo {
+      opacity: 1;
     }
 
     @media (max-width: 768px) {
@@ -60,7 +57,8 @@
 
   <div class="mural-container">
     <img id="slide" src="" alt="Mural Digital" class="ativo">
-    <iframe id="tv-player" src="" allow="autoplay; encrypted-media"></iframe>
+    <!-- Player de Vídeo Nativo para transmissão contínua -->
+    <video id="tv-player" autoplay muted playsinline></video>
   </div>
 
   <script>
@@ -73,22 +71,28 @@
       "foto6.jpg"
     ];
 
-    // ID do Canal da CNN Brasil no YouTube (Fixo)
-    const channelID = "UCvdwhh_fDyWccR42-hReJmA"; 
+    // Link do sinal ao vivo continuo HLS (.m3u8)
+    // Exemplo: Canal de Notícias / Record News / TV pública
+    const streamURL = "https://recordnews-lh.akamaihd.net/i/recordnews_hls@186595/index_1800_av-p.m3u8"; 
 
     let index = 0;
     const tempoPorSlide = 15000; // 15 segundos por foto
     const tempoTV = 180000;      // 3 minutos (180.000 ms) para a TV
 
     const imgElement = document.getElementById('slide');
-    const tvElement = document.getElementById('tv-player');
+    const videoElement = document.getElementById('tv-player');
+    let hls = null;
 
     function exibirFotos() {
-      // Oculta o player e encerra o vídeo para não gastar dados/memória
-      tvElement.classList.remove('ativo');
-      tvElement.src = "";
+      // Pausa o vídeo da TV e remove o sinal para não consumir internet no fundo
+      if (hls) {
+        hls.destroy();
+        hls = null;
+      }
+      videoElement.pause();
+      videoElement.classList.remove('ativo');
 
-      // Exibe a foto atual
+      // Inicia a exibição das imagens
       imgElement.src = imagens[index];
       imgElement.classList.add('ativo');
 
@@ -98,7 +102,6 @@
         setTimeout(() => {
           index++;
 
-          // Se passou da última foto, para as fotos e vai para a TV
           if (index >= imagens.length) {
             clearInterval(intervalFotos);
             index = 0; 
@@ -115,18 +118,29 @@
 
     function exibirTV() {
       imgElement.classList.remove('ativo');
+      videoElement.classList.add('ativo');
 
-      // Puxa a LIVE que estiver ativa no canal oficial da CNN Brasil no momento
-      tvElement.src = `https://www.youtube.com/embed/live_stream?channel=${channelID}&autoplay=1&mute=1&controls=0`;
-      tvElement.classList.add('ativo');
+      // Conecta o streaming contínuo sem dependência do YouTube
+      if (Hls.isSupported()) {
+        hls = new Hls();
+        hls.loadSource(streamURL);
+        hls.attachMedia(videoElement);
+        hls.on(Hls.Events.MANIFEST_PARSED, function() {
+          videoElement.play();
+        });
+      } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+        // Suporte para Safari (iOS/Mac)
+        videoElement.src = streamURL;
+        videoElement.play();
+      }
 
-      // Espera 3 minutos e volta para as fotos
+      // Após 3 minutos, volta para as fotos
       setTimeout(() => {
         exibirFotos();
       }, tempoTV);
     }
 
-    // Inicia a exibição
+    // Inicia o mural
     exibirFotos();
   </script>
 
