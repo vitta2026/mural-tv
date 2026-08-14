@@ -22,25 +22,36 @@
     .mural-container {
       width: 100vw;
       height: 100vh;
+      position: relative;
       display: flex;
       justify-content: center;
       align-items: center;
-      position: relative;
+    }
+
+    img, iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      opacity: 0;
+      transition: opacity 0.8s ease-in-out;
+      pointer-events: none; /* Evita cliques na TV */
+    }
+
+    img.ativo, iframe.ativo {
+      opacity: 1;
+      pointer-events: auto;
     }
 
     img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover; /* Na TV/PC, preenche a tela inteira */
-      display: block;
-      opacity: 1;
-      transition: opacity 0.8s ease-in-out; /* Controla a velocidade do esmaecimento */
+      object-fit: cover;
     }
 
-    /* --- REGRAS ESPECÍFICAS PARA CELULAR --- */
     @media (max-width: 768px) {
       img {
-        object-fit: contain; /* No celular mostra a foto inteira sem cortar */
+        object-fit: contain;
       }
     }
   </style>
@@ -48,7 +59,9 @@
 <body>
 
   <div class="mural-container">
-    <img id="slide" src="" alt="Mural Digital">
+    <img id="slide" src="" alt="Mural Digital" class="ativo">
+    <!-- Embed do YouTube com autoplay e som desativado (obrigatório para autoplay rodar em TVs/Browsers) -->
+    <iframe id="tv-player" src="" allow="autoplay; encrypted-media"></iframe>
   </div>
 
   <script>
@@ -61,25 +74,63 @@
       "foto6.jpg"
     ];
 
+    // Coloque aqui o ID do vídeo ao vivo da CNN Brasil no YouTube (a parte depois de watch?v=)
+    const youtubeLiveID = "i_Lw360d2_I"; 
+
     let index = 0;
-    const tempoPorSlide = 15000; // 15 segundos
+    const tempoPorSlide = 15000; // 15 segundos por foto
+    const tempoTV = 180000;      // 3 minutos (180.000 ms) para a TV
 
     const imgElement = document.getElementById('slide');
+    const tvElement = document.getElementById('tv-player');
 
-    function trocarSlide() {
-      // 1. Reduz a opacidade para sumir com a imagem atual
-      imgElement.style.opacity = 0;
+    function exibirFotos() {
+      // Oculta o player de TV e zera o SRC para economizar memória/banda
+      tvElement.classList.remove('ativo');
+      tvElement.src = "";
 
-      // 2. Aguarda o tempo da animação (800ms) antes de trocar a imagem e reaparecer
-      setTimeout(() => {
-        imgElement.src = imagens[index];
-        imgElement.style.opacity = 1;
-        index = (index + 1) % imagens.length;
-      }, 800); 
+      // Exibe a primeira foto
+      imgElement.src = imagens[index];
+      imgElement.classList.add('ativo');
+
+      // Loop das fotos
+      const intervalFotos = setInterval(() => {
+        imgElement.style.opacity = 0;
+
+        setTimeout(() => {
+          index++;
+
+          // Se passou da última foto, para o carrossel de fotos e chama a TV
+          if (index >= imagens.length) {
+            clearInterval(intervalFotos);
+            index = 0; // Reinicia o contador para o próximo ciclo
+            exibirTV();
+            return;
+          }
+
+          imgElement.src = imagens[index];
+          imgElement.style.opacity = 1;
+        }, 800);
+
+      }, tempoPorSlide);
     }
 
-    trocarSlide();
-    setInterval(trocarSlide, tempoPorSlide);
+    function exibirTV() {
+      // Esconde a foto
+      imgElement.classList.remove('ativo');
+
+      // Carrega o vídeo ao vivo com autoplay e muted (necessário para permissão de auto-exibição)
+      tvElement.src = `https://www.youtube.com/embed/${youtubeLiveID}?autoplay=1&mute=1&controls=0`;
+      tvElement.classList.add('ativo');
+
+      // Aguarda 3 minutos e volta para a sequência de fotos
+      setTimeout(() => {
+        exibirFotos();
+      }, tempoTV);
+    }
+
+    // Inicia o fluxo com as fotos
+    exibirFotos();
   </script>
 
 </body>
